@@ -8,11 +8,11 @@ export const environment = {
   production: false
 };
 export const CONSTANTS: Constants = {
-  NAME: 'Testnet / Edonet',
-  NETWORK: 'edonet',
+  NAME: 'Testnet / Delphinet',
+  NETWORK: 'delphinet',
   MAINNET: false,
-  NODE_URL: 'https://edonet-tezos.giganode.io',
-  BLOCK_EXPLORER_URL: 'https://edonet.tzkt.io',
+  NODE_URL: 'https://delphinet-tezos.giganode.io',
+  BLOCK_EXPLORER_URL: 'https://delphinet.tzkt.io',
   ASSETS: {
     'KT1REPEBMQS3Be8ZybkQQfSwAv3g4pHJViuK': {
       kind: 'FA1.2',
@@ -25,7 +25,7 @@ export const CONSTANTS: Constants = {
           description: 'USDtz is a Tezos on-chain stablecoin pegged to the value of the United States Dollar.',
           displayUrl: '../../../assets/img/tokens/usdtz.png',
           thumbnailUrl: '../../../assets/img/tokens/usdtz.png',
-          symbolPreference: true
+          shouldPreferSymbol: true
         }
       }
     },
@@ -40,8 +40,8 @@ export const CONSTANTS: Constants = {
           description: 'This certificate verifies that the holder of its private key attended, contributed and completed the Tezos Israel and Madfish Solution Workshop on December 7th to the 9th, 2020. The certificate holder utilized skills in smart contract development and tokenization to build, test and deploy a token on the Tezos blockchain.',
           displayUrl: '../../../assets/img/tokens/mfil.jfif',
           thumbnailUrl: '../../../assets/img/tokens/mfil.jfif',
-          nonTransferable: true,
-          booleanAmount: true
+          isTransferable: false,
+          isBooleanAmount: true
         }
       }
     },
@@ -56,7 +56,7 @@ export const CONSTANTS: Constants = {
           description: 'Kolibri is a Tezos based stablecoin built on Collateralized Debt Positions (CDPs) known as Ovens.',
           displayUrl: '../../../assets/img/tokens/kusd.png',
           thumbnailUrl: '../../../assets/img/tokens/kusd.png',
-          symbolPreference: true
+          shouldPreferSymbol: true
         }
       }
     }
@@ -66,5 +66,7 @@ export const TRUSTED_TOKEN_CONTRACTS = [
   'KT1LyJV9JdcDCp5zDfw6MxpoShXYrBMG3dfK',
   'KT1RfMoskMhR1hDFJTVN6gGMwQLDSTmLeDsc',
   'KT1Szwqme712TkQ7LdP1hBqKjdUUBjxoB8bR',
-  'KT1PS2jZVzNMW54UsnqBqwwkArXnAZ29jiTF'
+  'KT1PS2jZVzNMW54UsnqBqwwkArXnAZ29jiTF',
+  'KT1Jscaxi6J9sKUzX37wFfRRdZPdNfMDy85R',
+  'KT1NaoA6pjAMCpnQAmUoQTxMCuEjJ2kodyrj'
 ];
