@@ -21,7 +21,7 @@
     <div class="km-body" *ngIf="activeView === 0">
       <div class="amount">
         <ng-container *ngIf="!hideAmount">
-          <input #amountInput class="input" class="custom-large" placeholder="0.00" [(ngModel)]="amount"
+          <input #amountInput class="input" class="custom-large" [placeholder]="amtPlaceholder" [(ngModel)]="amount"
             (mousedown)="sendMax = false; default" [style.font-size.rem]="dynSize()" (input)="amountChange()"
             (keypress)="keyPressNumbersDecimal($event, 'amount')" (change)="amountChange()"
             [style.width.ch]="amount ? amount.length + 1 : 3.6" [disabled]="isMultipleDestinations || (beaconMode && operationRequest.operationDetails[0].amount)">

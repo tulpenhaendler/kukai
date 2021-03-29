@@ -966,4 +966,14 @@ export class SendComponent implements OnInit, OnChanges {
     }
     return `Send ${this.getAssetName(false)}`;
   }
+  get amtPlaceholder() {
+    if (this.tokenTransfer) {
+      const decimals: number = this.tokenService.getAsset(this.tokenTransfer).decimals
+      if (decimals == 0 && this.maxToSend(this.activeAccount) == '1') {
+        return '1'
+      }
+      return Number(0).toFixed(decimals)
+    }
+    return '0.00'
+  }
 }
