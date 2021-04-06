@@ -5,6 +5,7 @@ import * as zxcvbn from 'zxcvbn';
 
 import { TranslateService } from '@ngx-translate/core';
 import { TorusWallet } from '../wallet/wallet';
+import assert from 'assert';
 
 @Injectable()
 export class InputValidationService {
@@ -67,6 +68,11 @@ export class InputValidationService {
   email(email: string): Boolean {
     const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
+  }
+  tezosDomain(domain: string) {
+    const a = domain.split('.')
+    // basic validation that is in the correct format
+    return (a.length === 2 && a[0].length && a[1].length)
   }
   twitterAccount(username: string) {
     // The only characters you can use are uppercase and lowercase letters, numbers, and the underscore character ( _ ).

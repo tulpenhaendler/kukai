@@ -16,6 +16,7 @@ import { TorusService } from '../../services/torus/torus.service';
 import { LookupService } from '../../services/lookup/lookup.service';
 import { TokenService } from '../../services/token/token.service';
 import { emitMicheline, assertMichelsonData } from '@taquito/michel-codec';
+import { TezosDomainsService } from '../../services/tezos-domains/tezos-domains.service';
 
 interface SendData {
   to: string;
@@ -105,6 +106,7 @@ export class SendComponent implements OnInit, OnChanges {
     private estimateService: EstimateService,
     private messageService: MessageService,
     public torusService: TorusService,
+    public tezosDomains: TezosDomainsService,
     private lookupService: LookupService,
     public tokenService: TokenService
   ) { }
@@ -651,6 +653,7 @@ export class SendComponent implements OnInit, OnChanges {
     return (this.activeAccount && (this.activeAccount instanceof OriginatedAccount));
   }
   validateReceiverAddress() {
+    console.log('this.torusVerifier', this.torusVerifier)
     if (!this.torusVerifier) {
       if (!this.inputValidationService.address(this.toPkh) && this.toPkh !== '') {
         this.formInvalid = this.translate.instant('SENDCOMPONENT.INVALIDRECEIVERADDRESS');
@@ -679,6 +682,15 @@ export class SendComponent implements OnInit, OnChanges {
             this.formInvalid = ''; // clear error
           }
           this.torusLookup();
+        }
+      } else if (this.torusVerifier === 'domain') {
+        const isValid = this.inputValidationService.tezosDomain(this.toPkh)
+        console.log(this.torusVerifier)
+        if (!isValid && this.toPkh !== '') {
+          this.formInvalid = 'Tezos Domains must be valid url';
+        } else {
+          this.formInvalid = ''; // clear error
+          this.tezosDomainLookup();
         }
       } else {
         this.formInvalid = 'Unrecognized verifier';
@@ -738,7 +750,9 @@ export class SendComponent implements OnInit, OnChanges {
       toPkh === this.activeAccount.address
     )) {
       return this.translate.instant('SENDCOMPONENT.INVALIDRECEIVERADDRESS');
-    } else if (this.torusVerifier
+    } else if (this.torusVerifier === 'domain' && this.torusLookupAddress === this.activeAccount.address) {
+      return 'Invalid recipient';
+    } else if (this.torusVerifier && this.torusVerifier !== 'domain'
       && (!this.inputValidationService.torusAccount(this.toPkh, this.torusVerifier) || this.torusLookupAddress === this.activeAccount.address)) {
       return 'Invalid recipient';
     } else if (!this.inputValidationService.amount(amount, this.tokenTransfer ? this.tokenService.getAsset(this.tokenTransfer).decimals : undefined) ||
@@ -878,6 +892,30 @@ export class SendComponent implements OnInit, OnChanges {
       } else {
         this.torusLookupAddress = '';
       }
+    }
+  }
+  async tezosDomainLookup() {
+    try {
+      this.torusLookupAddress = '';
+      this.torusLookupId = '';
+      if (this.toPkh) {
+        console.log('this.toPkh', this.toPkh)
+        // highjack the torus logic for tezosDomains
+        this.torusPendingLookup = true;
+        const pkh = await this.tezosDomains.getAddressFromDomain(this.toPkh)
+        if (pkh) {
+          this.torusLookupId = this.toPkh;
+          this.torusLookupAddress = pkh;
+          this.estimateFees();
+          console.log('tezosDomain address', pkh);
+        } else {
+          this.formInvalid = 'This domain was not found'
+        }
+      }
+    } catch (error) {
+      this.formInvalid = error.message;
+    } finally {
+      this.torusPendingLookup = false;
     }
   }
   torusReady(): boolean {

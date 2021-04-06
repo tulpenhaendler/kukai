@@ -53,6 +53,7 @@
             <option value="" selected>Tezos Address</option>
             <option *ngFor="let key of torusService.verifierMapKeys" value="{{key}}">
               {{ torusService.verifierMap[key].name }} Account</option>
+            <option value="domain" selected>Tezos Domains</option>
           </select></label>
         <input type="text" class="text" (input)="updateDefaultValues()" (change)="validateReceiverAddress()" [disabled]="beaconMode"
           [(ngModel)]="toPkh">
