@@ -24,16 +24,16 @@
       </a>
       <img src="../../../assets/img/slash.svg">
       <div class="dropdown">
-        <div class="dropbtn"><span>{{ activeAccount.shortAddress() }}</span><img
+        <div class="dropbtn"><span class="account-alias">{{ getAccountAlias(activeAccount) }}</span><img
             src="../../../assets/img/chevron-down.svg"></div>
         <div class="dropdown-content">
           <ng-container *ngFor="let impAcc of impAccs">
-            <a routerLink="/account/{{impAcc.address}}" [class.selected]="impAcc.address === activeAccount.address">
-              {{ impAcc.shortAddress() }}
+            <a class="account-alias" routerLink="/account/{{impAcc.address}}" [class.selected]="impAcc.address === activeAccount.address">
+              {{ getAccountAlias(impAcc) }}
             </a>
             <ng-container *ngFor="let origAcc of impAcc.originatedAccounts">
-              <a routerLink="/account/{{origAcc.address}}" [class.selected]="origAcc.address === activeAccount.address">
-                {{ origAcc.shortAddress() }}
+              <a class="account-alias" routerLink="/account/{{origAcc.address}}" [class.selected]="origAcc.address === activeAccount.address">
+                {{ getAccountAlias(origAcc) }}
               </a>
             </ng-container>
           </ng-container>

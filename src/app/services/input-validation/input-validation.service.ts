@@ -72,7 +72,12 @@ export class InputValidationService {
   tezosDomain(domain: string) {
     const a = domain.split('.')
     // basic validation that is in the correct format
-    return (a.length === 2 && a[0].length && a[1].length)
+    for (const sub of a) {
+      if (!sub.length) {
+        return false
+      }
+    }
+    return a.length >= 2
   }
   twitterAccount(username: string) {
     // The only characters you can use are uppercase and lowercase letters, numbers, and the underscore character ( _ ).

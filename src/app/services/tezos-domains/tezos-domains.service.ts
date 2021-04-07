@@ -26,5 +26,8 @@ export class TezosDomainsService {
     const address = await this.client.resolver.resolveNameToAddress(domain);
     return address
   }
-
+  async getDomainFromAddress(pkh: string) {
+    const domain = await this.client.resolver.resolveAddressToName(pkh)
+    return domain
+  }
 }

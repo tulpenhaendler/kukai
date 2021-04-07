@@ -6,6 +6,7 @@ import { Account, TorusWallet } from '../../services/wallet/wallet';
 import { LookupService } from '../../services/lookup/lookup.service';
 import { MessageService } from '../../services/message/message.service';
 import { CONSTANTS as _CONSTANTS } from '../../../environments/environment';
+import { TezosDomainsService } from '../../services/tezos-domains/tezos-domains.service';
 
 @Component({
   selector: 'app-header',
@@ -17,17 +18,33 @@ export class HeaderComponent implements OnInit {
   @Input() settings = false;
   impAccs: Account[];
   readonly CONSTANTS = _CONSTANTS;
+  readonly mapAccountAlias: Map<string, string> = new Map();
   constructor(
     private router: Router,
     public walletService: WalletService,
     public lookupService: LookupService,
     private coordinatorService: CoordinatorService,
     private messageService: MessageService,
+    public tezosDomains: TezosDomainsService,
   ) { }
-
+  fetchDomainAlias() {
+    for (const account of this.impAccs || []) {
+      this.tezosDomains
+        .getDomainFromAddress(account.pkh)
+        .then((domain) => {
+          console.log('domain', account.pkh, domain)
+          if (domain) {
+            this.mapAccountAlias.set(account.pkh, domain)
+          }
+        }).catch((err) => {
+          console.error(err.message)
+        });
+    }
+  }
   ngOnInit(): void {
     if (this.walletService.wallet) {
       this.impAccs = this.walletService.wallet.implicitAccounts;
+      this.fetchDomainAlias()
     }
   }
   logout() {
@@ -48,5 +65,11 @@ export class HeaderComponent implements OnInit {
       return this.walletService.wallet.verifier;
     }
     return '';
+  }
+  getAccountAlias(account: Account) {
+    if (this.mapAccountAlias.has(account.pkh)) {
+      return this.mapAccountAlias.get(account.pkh)
+    }
+    return account.shortAddress()
   }
 }
