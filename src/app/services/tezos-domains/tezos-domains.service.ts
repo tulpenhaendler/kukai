@@ -14,20 +14,20 @@ export class TezosDomainsService {
 
     const tezosToolkit = new TezosToolkit(CONSTANTS.NODE_URL);
     tezosToolkit.addExtension(new Tzip16Module());
-    const options = { caching: { enabled: false } }
+    const options = { caching: { enabled: false } };
     this.client = new TaquitoTezosDomainsClient({
       tezos: tezosToolkit,
-      network: <"mainnet" | "edonet">CONSTANTS.NETWORK,
+      network: <'mainnet' | 'edonet'>CONSTANTS.NETWORK,
       ...options
     });
 
   }
   async getAddressFromDomain(domain: string) {
     const address = await this.client.resolver.resolveNameToAddress(domain);
-    return address
+    return address;
   }
   async getDomainFromAddress(pkh: string) {
-    const domain = await this.client.resolver.resolveAddressToName(pkh)
-    return domain
+    const domain = await this.client.resolver.resolveAddressToName(pkh);
+    return domain;
   }
 }

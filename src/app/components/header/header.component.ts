@@ -32,19 +32,19 @@ export class HeaderComponent implements OnInit {
       this.tezosDomains
         .getDomainFromAddress(account.pkh)
         .then((domain) => {
-          console.log('domain', account.pkh, domain)
+          console.log('domain', account.pkh, domain);
           if (domain) {
-            this.mapAccountAlias.set(account.pkh, domain)
+            this.mapAccountAlias.set(account.pkh, domain);
           }
         }).catch((err) => {
-          console.error(err.message)
+          console.error(err.message);
         });
     }
   }
   ngOnInit(): void {
     if (this.walletService.wallet) {
       this.impAccs = this.walletService.wallet.implicitAccounts;
-      this.fetchDomainAlias()
+      this.fetchDomainAlias();
     }
   }
   logout() {
@@ -68,8 +68,8 @@ export class HeaderComponent implements OnInit {
   }
   getAccountAlias(account: Account) {
     if (this.mapAccountAlias.has(account.pkh)) {
-      return this.mapAccountAlias.get(account.pkh)
+      return this.mapAccountAlias.get(account.pkh);
     }
-    return account.shortAddress()
+    return account.shortAddress();
   }
 }

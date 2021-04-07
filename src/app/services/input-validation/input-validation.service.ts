@@ -70,14 +70,14 @@ export class InputValidationService {
     return re.test(email);
   }
   tezosDomain(domain: string) {
-    const a = domain.split('.')
+    const a = domain.split('.');
     // basic validation that is in the correct format
     for (const sub of a) {
       if (!sub.length) {
-        return false
+        return false;
       }
     }
-    return a.length >= 2
+    return a.length >= 2;
   }
   twitterAccount(username: string) {
     // The only characters you can use are uppercase and lowercase letters, numbers, and the underscore character ( _ ).

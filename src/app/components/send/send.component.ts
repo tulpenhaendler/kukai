@@ -653,7 +653,7 @@ export class SendComponent implements OnInit, OnChanges {
     return (this.activeAccount && (this.activeAccount instanceof OriginatedAccount));
   }
   validateReceiverAddress() {
-    console.log('this.torusVerifier', this.torusVerifier)
+    console.log('this.torusVerifier', this.torusVerifier);
     if (!this.torusVerifier) {
       if (!this.inputValidationService.address(this.toPkh) && this.toPkh !== '') {
         this.formInvalid = this.translate.instant('SENDCOMPONENT.INVALIDRECEIVERADDRESS');
@@ -684,8 +684,8 @@ export class SendComponent implements OnInit, OnChanges {
           this.torusLookup();
         }
       } else if (this.torusVerifier === 'domain') {
-        const isValid = this.inputValidationService.tezosDomain(this.toPkh)
-        console.log(this.torusVerifier)
+        const isValid = this.inputValidationService.tezosDomain(this.toPkh);
+        console.log(this.torusVerifier);
         if (!isValid && this.toPkh !== '') {
           this.formInvalid = 'Tezos Domains must be valid url';
         } else {
@@ -899,17 +899,17 @@ export class SendComponent implements OnInit, OnChanges {
       this.torusLookupAddress = '';
       this.torusLookupId = '';
       if (this.toPkh) {
-        console.log('this.toPkh', this.toPkh)
+        console.log('this.toPkh', this.toPkh);
         // highjack the torus logic for tezosDomains
         this.torusPendingLookup = true;
-        const pkh = await this.tezosDomains.getAddressFromDomain(this.toPkh)
+        const pkh = await this.tezosDomains.getAddressFromDomain(this.toPkh);
         if (pkh) {
           this.torusLookupId = this.toPkh;
           this.torusLookupAddress = pkh;
           this.estimateFees();
           console.log('tezosDomain address', pkh);
         } else {
-          this.formInvalid = 'This domain was not found'
+          this.formInvalid = 'This domain was not found';
         }
       }
     } catch (error) {

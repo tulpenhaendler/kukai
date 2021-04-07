@@ -70,7 +70,12 @@
       </label>
       </div>
       <ng-container *ngIf="torusVerifier">
-        <p class="torus-details" *ngIf="torusPendingLookup">Loading address...</p>
+        <div *ngIf="torusPendingLookup" style="margin-top: 0.5rem;">
+          <img style="float:left" src="../../../assets/img/feeLoader.gif">
+          <div style="margin-left: 20px;">
+            <p class="torus-details" style="margin:0;">Loading address...</p>
+          </div>
+        </div>
         <p class="torus-details" *ngIf="!torusPendingLookup && torusLookupAddress">{{ torusLookupAddress }}</p>
       </ng-container>
       <div *ngIf="this.isMultipleDestinations" class="group">

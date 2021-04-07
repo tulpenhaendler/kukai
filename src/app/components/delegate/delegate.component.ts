@@ -20,6 +20,7 @@ import Big from 'big.js';
   styleUrls: ['./delegate.component.scss']
 })
 export class DelegateComponent implements OnInit, OnChanges {
+  domainPendingLookup = false;
   modalOpen = false;
   activeView = 0;
   recommendedFee = 0.0004;
@@ -107,6 +108,7 @@ export class DelegateComponent implements OnInit, OnChanges {
     this.clearForm();
     this.ledgerError = '';
     this.messageService.stopSpinner();
+    this.domainPendingLookup = false;
   }
   async openModal2() {
     this.formInvalid = await this.invalidInput();
@@ -291,15 +293,15 @@ export class DelegateComponent implements OnInit, OnChanges {
     // if it is a tezos-domain
     if (this.toPkh && this.toPkh.indexOf('.') > -1) {
       try {
-        this.messageService.startSpinner('Looking up Domain...');
-        const pkh = await this.tezosDomains.getAddressFromDomain(this.toPkh)
+        this.domainPendingLookup = true;
+        const pkh = await this.tezosDomains.getAddressFromDomain(this.toPkh);
         if (pkh) {
-          this.toPkh = pkh
+          this.toPkh = pkh;
         }
       } catch (error) {
-        return error.message
+        return error.message;
       } finally {
-        this.messageService.stopSpinner();
+        this.domainPendingLookup = false;
       }
     }
     if ((!this.inputValidationService.address(this.toPkh) &&
