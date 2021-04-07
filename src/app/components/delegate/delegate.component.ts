@@ -11,6 +11,7 @@ import { InputValidationService } from '../../services/input-validation/input-va
 import { LedgerService } from '../../services/ledger/ledger.service';
 import { LedgerWallet, Account, ImplicitAccount, OriginatedAccount, TorusWallet } from '../../services/wallet/wallet';
 import { MessageService } from '../../services/message/message.service';
+import { TezosDomainsService } from '../../services/tezos-domains/tezos-domains.service';
 import Big from 'big.js';
 
 @Component({
@@ -52,7 +53,8 @@ export class DelegateComponent implements OnInit, OnChanges {
     private exportService: ExportService,
     private inputValidationService: InputValidationService,
     private ledgerService: LedgerService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private tezosDomains: TezosDomainsService,
   ) { }
 
   ngOnInit() {
@@ -107,7 +109,7 @@ export class DelegateComponent implements OnInit, OnChanges {
     this.messageService.stopSpinner();
   }
   async openModal2() {
-    this.formInvalid = this.invalidInput();
+    this.formInvalid = await this.invalidInput();
     if (!this.formInvalid) {
       if (!this.fee) { this.fee = this.recommendedFee.toString(); }
       this.storedFee = this.fee;
@@ -285,7 +287,18 @@ export class DelegateComponent implements OnInit, OnChanges {
     this.sendResponse = '';
     this.ledgerError = '';
   }
-  invalidInput(): string {
+  async invalidInput(): Promise<string> {
+    // if it is a tezos-domain
+    if (this.toPkh && this.toPkh.indexOf('.') > -1) {
+      try {
+        const pkh = await this.tezosDomains.getAddressFromDomain(this.toPkh)
+        if (pkh) {
+          this.toPkh = pkh
+        }
+      } catch (error) {
+        return error.message
+      }
+    }
     if ((!this.inputValidationService.address(this.toPkh) &&
       this.toPkh !== '') || (
         this.toPkh.length > 1 && this.toPkh.slice(0, 2) !== 'tz') || (
