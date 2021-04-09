@@ -25,7 +25,7 @@ interface TokenMetadata {
 })
 export class TzktService implements Indexer {
   readonly network = CONSTANTS.NETWORK.replace('edonet', 'edo2net');
-  public readonly bcd = 'https://ee.better-call.dev/v1';
+  public readonly bcd = 'https://api.test.better-call.dev/v1';
   readonly BCD_TOKEN_QUERY_SIZE = 10;
   constructor() { }
   async getContractAddresses(pkh: string): Promise<any> {
