@@ -78,6 +78,13 @@ export class AccountViewComponent implements OnInit {
   }
 
   getCounterparty(transaction: any): string {
+    if (transaction.type === 'transaction') {
+      const domain = this.activityService.getDomainAlias(transaction.destination.address)
+      if (domain) {
+        return <any>{ address: domain }
+      }
+    }
+
     return this.activityService.getCounterparty(transaction, this.account);
   }
   copy(account: Account) {

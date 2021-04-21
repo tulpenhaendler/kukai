@@ -9,17 +9,25 @@ import { IndexerService } from '../indexer/indexer.service';
 import Big from 'big.js';
 import { CONSTANTS } from '../../../environments/environment';
 import { TokenService } from '../token/token.service';
+import { TezosDomainsService } from '../tezos-domains/tezos-domains.service';
+
+const localStoreTezosDomainKey = 'tezos-domains'
 
 @Injectable()
 export class ActivityService {
   maxTransactions = 10;
+  private mapDomainAlias: Map<string, string> = new Map();
   constructor(
     private walletService: WalletService,
     private messageService: MessageService,
     private lookupService: LookupService,
     private indexerService: IndexerService,
-    private tokenService: TokenService
-  ) { }
+    private tokenService: TokenService,
+    private tezosDomains: TezosDomainsService,
+  ) {
+    this.mapDomainAlias = new Map(JSON.parse(localStorage.getItem(localStoreTezosDomainKey) || '[]'))
+    this.clearNoDomains()
+  }
   updateTransactions(pkh): Observable<any> {
     try {
       const account = this.walletService.wallet.getAccount(pkh);
@@ -33,6 +41,17 @@ export class ActivityService {
     }
   }
   getTransactonsCounter(account: Account): Observable<any> {
+    // update for tezos domains
+    const aryDestinationAddress = account.activities
+      .filter((val, idx, ary) => val.type === 'transaction')
+      .map(trx => trx?.destination?.address)
+      .filter((val, idx, ary) => ary.indexOf(val) === idx)
+
+    for (const pkh of aryDestinationAddress) {
+      this.fetchDomainAlias(pkh)
+    }
+
+
     const knownTokenIds: string[] = this.tokenService.knownTokenIds();
     return fromPromise(this.indexerService.accountInfo(account.address, knownTokenIds)).pipe(
       flatMap((data) => {
@@ -154,5 +173,36 @@ export class ActivityService {
       counterPartyAddress = this.lookupService.resolve(counterParty);
     }
     return counterPartyAddress;
+  }
+
+  clearNoDomains() {
+    // Every 5 min clear the map so that it can re-fetch in case anyone gets a domain
+    setTimeout(() => {
+      const aryRemoveKey = []
+      for (const [key, value] of this.mapDomainAlias.entries()) {
+        if (!value) {
+          aryRemoveKey.push(key)
+        }
+      }
+      for (const key of aryRemoveKey) {
+        this.mapDomainAlias.delete(key)
+      }
+      this.clearNoDomains()
+    }, 5 * 60 * 1000);
+  }
+  fetchDomainAlias(pkh: string) {
+    if (!this.mapDomainAlias.has(pkh)) {
+      this.tezosDomains
+        .getDomainFromAddress(pkh)
+        .then((domain) => {
+          this.mapDomainAlias.set(pkh, domain);
+          localStorage.setItem(localStoreTezosDomainKey, JSON.stringify([...this.mapDomainAlias.entries()]))
+        }).catch((err) => {
+          console.error(err.message);
+        });
+    }
+  }
+  getDomainAlias(pkh) {
+    return this.mapDomainAlias.get(pkh)
   }
 }
