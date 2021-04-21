@@ -11,7 +11,7 @@ import { CONSTANTS } from '../../../environments/environment';
 import { TokenService } from '../token/token.service';
 import { TezosDomainsService } from '../tezos-domains/tezos-domains.service';
 
-const localStoreTezosDomainKey = 'tezos-domains'
+const localStoreTezosDomainKey = 'tezos-domains';
 
 @Injectable()
 export class ActivityService {
@@ -25,8 +25,8 @@ export class ActivityService {
     private tokenService: TokenService,
     private tezosDomains: TezosDomainsService,
   ) {
-    this.mapDomainAlias = new Map(JSON.parse(localStorage.getItem(localStoreTezosDomainKey) || '[]'))
-    this.clearNoDomains()
+    this.mapDomainAlias = new Map(JSON.parse(localStorage.getItem(localStoreTezosDomainKey) || '[]'));
+    this.clearNoDomains();
   }
   updateTransactions(pkh): Observable<any> {
     try {
@@ -44,17 +44,17 @@ export class ActivityService {
     // update for tezos domains
     const aryDestinationAddress = account.activities
       .filter((val, idx, ary) => val.type === 'transaction')
-      .map(trx => trx?.destination?.address)
+      .map(trx => trx?.destination?.address);
     const arySourceAddress = account.activities
       .filter((val, idx, ary) => val.type === 'transaction')
-      .map(trx => trx?.source?.address)
+      .map(trx => trx?.source?.address);
 
     // also add all implicit accounts to the list
-    const aryImplicitAddress = this.walletService.wallet.getAccounts().map(a => a.address)
+    const aryImplicitAddress = this.walletService.wallet.getAccounts().map(a => a.address);
 
-    const aryAllAddress = [].concat(aryDestinationAddress).concat(arySourceAddress).concat(aryImplicitAddress)
+    const aryAllAddress = [].concat(aryDestinationAddress).concat(arySourceAddress).concat(aryImplicitAddress);
     for (const pkh of aryAllAddress.filter((val, idx, ary) => ary.indexOf(val) === idx)) {
-      this.fetchDomainAlias(pkh)
+      this.fetchDomainAlias(pkh);
     }
 
 
@@ -184,16 +184,16 @@ export class ActivityService {
   clearNoDomains() {
     // Every 5 min clear the map so that it can re-fetch in case anyone gets a domain
     setTimeout(() => {
-      const aryRemoveKey = []
+      const aryRemoveKey = [];
       for (const [key, value] of this.mapDomainAlias.entries()) {
         if (!value) {
-          aryRemoveKey.push(key)
+          aryRemoveKey.push(key);
         }
       }
       for (const key of aryRemoveKey) {
-        this.mapDomainAlias.delete(key)
+        this.mapDomainAlias.delete(key);
       }
-      this.clearNoDomains()
+      this.clearNoDomains();
     }, 5 * 60 * 1000);
   }
   fetchDomainAlias(pkh: string) {
@@ -202,13 +202,13 @@ export class ActivityService {
         .getDomainFromAddress(pkh)
         .then((domain) => {
           this.mapDomainAlias.set(pkh, domain);
-          localStorage.setItem(localStoreTezosDomainKey, JSON.stringify([...this.mapDomainAlias.entries()]))
+          localStorage.setItem(localStoreTezosDomainKey, JSON.stringify([...this.mapDomainAlias.entries()]));
         }).catch((err) => {
           console.error(err.message);
         });
     }
   }
   getDomainAlias(pkh) {
-    return this.mapDomainAlias.get(pkh)
+    return this.mapDomainAlias.get(pkh);
   }
 }

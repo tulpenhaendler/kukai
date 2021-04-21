@@ -42,8 +42,8 @@ export class HeaderComponent implements OnInit {
     if (this.walletService.wallet instanceof TorusWallet) {
       return this.walletService.wallet.displayName();
     }
-    const domain = this.activityService.getDomainAlias(this.activeAccount?.pkh)
-    if (domain) { return domain }
+    const domain = this.activityService.getDomainAlias(this.activeAccount?.pkh);
+    if (domain) { return domain; }
 
     return '';
   }
@@ -51,7 +51,7 @@ export class HeaderComponent implements OnInit {
     if (this.walletService.wallet instanceof TorusWallet) {
       return this.walletService.wallet.verifier;
     }
-    const domain = this.activityService.getDomainAlias(this.activeAccount?.pkh)
+    const domain = this.activityService.getDomainAlias(this.activeAccount?.pkh);
     if (domain) { return 'domain'; }
 
     return '';
