@@ -45,9 +45,15 @@ export class ActivityService {
     const aryDestinationAddress = account.activities
       .filter((val, idx, ary) => val.type === 'transaction')
       .map(trx => trx?.destination?.address)
-      .filter((val, idx, ary) => ary.indexOf(val) === idx)
+    const arySourceAddress = account.activities
+      .filter((val, idx, ary) => val.type === 'transaction')
+      .map(trx => trx?.source?.address)
 
-    for (const pkh of aryDestinationAddress) {
+    // also add all implicit accounts to the list
+    const aryImplicitAddress = this.walletService.wallet.getAccounts().map(a => a.address)
+
+    const aryAllAddress = [].concat(aryDestinationAddress).concat(arySourceAddress).concat(aryImplicitAddress)
+    for (const pkh of aryAllAddress.filter((val, idx, ary) => ary.indexOf(val) === idx)) {
       this.fetchDomainAlias(pkh)
     }
 
