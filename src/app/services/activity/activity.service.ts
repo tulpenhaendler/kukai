@@ -42,21 +42,7 @@ export class ActivityService {
   }
   getTransactonsCounter(account: Account): Observable<any> {
     // update for tezos domains
-    const aryDestinationAddress = account.activities
-      .filter((val, idx, ary) => val.type === 'transaction')
-      .map(trx => trx?.destination?.address);
-    const arySourceAddress = account.activities
-      .filter((val, idx, ary) => val.type === 'transaction')
-      .map(trx => trx?.source?.address);
-
-    // also add all implicit accounts to the list
-    const aryImplicitAddress = this.walletService.wallet.getAccounts().map(a => a.address);
-
-    const aryAllAddress = [].concat(aryDestinationAddress).concat(arySourceAddress).concat(aryImplicitAddress);
-    for (const pkh of aryAllAddress.filter((val, idx, ary) => ary.indexOf(val) === idx)) {
-      this.fetchDomainAlias(pkh);
-    }
-
+    this.fetchDomainAliasAll(account);
 
     const knownTokenIds: string[] = this.tokenService.knownTokenIds();
     return fromPromise(this.indexerService.accountInfo(account.address, knownTokenIds)).pipe(
@@ -128,6 +114,10 @@ export class ActivityService {
   }
   promptNewActivities(account: Account, oldActivities: Activity[], newActivities: Activity[]) {
     for (const activity of newActivities) {
+      if (activity?.type === 'transaction' && activity?.destination?.address === CONSTANTS.TEZOS_DOMAIN_CONTRACT) {
+        this.clearNoDomains();
+        this.fetchDomainAliasAll(account);
+      }
       const index = oldActivities.findIndex((a) => a.hash === activity.hash);
       if (index === -1 || (index !== -1 && oldActivities[index].status === 0)) {
         const now = (new Date()).getTime();
@@ -206,6 +196,22 @@ export class ActivityService {
         }).catch((err) => {
           console.error(err.message);
         });
+    }
+  }
+  fetchDomainAliasAll(account: Account) {
+    const aryDestinationAddress = account.activities
+      .filter((val, idx, ary) => val.type === 'transaction')
+      .map(trx => trx?.destination?.address);
+    const arySourceAddress = account.activities
+      .filter((val, idx, ary) => val.type === 'transaction')
+      .map(trx => trx?.source?.address);
+
+    // also add all implicit accounts to the list
+    const aryImplicitAddress = this.walletService.wallet.getAccounts().map(a => a.address);
+
+    const aryAllAddress = [].concat(aryDestinationAddress).concat(arySourceAddress).concat(aryImplicitAddress);
+    for (const pkh of aryAllAddress.filter((val, idx, ary) => ary.indexOf(val) === idx)) {
+      this.fetchDomainAlias(pkh);
     }
   }
   getDomainAlias(pkh) {

@@ -5,6 +5,7 @@ export const environment = {
 };
 export const CONSTANTS: Constants = {
   NAME: 'Mainnet',
+  TEZOS_DOMAIN_CONTRACT: '',
   NETWORK: 'mainnet',
   MAINNET: true,
   NODE_URL: 'https://mainnet-tezos.giganode.io',
