@@ -90,6 +90,7 @@ export class ActivityService {
           }
           for (const activity of operations) {
             const counterParty = this.getCounterparty(activity, account, false);
+            console.log('counterParty', counterParty)
             this.lookupService.check(counterParty);
           }
         } else {
@@ -103,6 +104,10 @@ export class ActivityService {
   }
   promptNewActivities(account: Account, oldActivities: Activity[], newActivities: Activity[]) {
     for (const activity of newActivities) {
+      // if (activity?.type === 'transaction' && activity?.destination?.address === CONSTANTS.TEZOS_DOMAIN_CONTRACT) {
+      //   this.clearNoDomains();
+      //   this.fetchDomainAliasAll(account);
+      // }
       const index = oldActivities.findIndex((a) => a.hash === activity.hash);
       if (index === -1 || (index !== -1 && oldActivities[index].status === 0)) {
         const now = (new Date()).getTime();
@@ -128,7 +133,6 @@ export class ActivityService {
   }
   getCounterparty(transaction: Activity, account: Account, withLookup = true): string {
     let counterParty = { address: '' };
-    let counterPartyAddress = '';
     if (transaction.type === 'delegation') {
       if (transaction.destination) {
         counterParty = transaction.destination;
@@ -151,8 +155,9 @@ export class ActivityService {
       counterParty = { address: '' };
     }
     if (withLookup) {
-      counterPartyAddress = this.lookupService.resolve(counterParty);
+      return this.lookupService.resolve(counterParty);
+    } else {
+      return counterParty.address;
     }
-    return counterPartyAddress;
   }
 }

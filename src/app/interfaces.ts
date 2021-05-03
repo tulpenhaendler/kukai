@@ -4,20 +4,20 @@ import { ContractType } from './services/token/token.service';
 export { Activity };
 
 export interface KeyPair {
-    sk: string|null;
-    pk: string|null;
-    pkh: string;
+  sk: string|null;
+  pk: string|null;
+  pkh: string;
 }
 export interface Wallet {
-  seed: null|string;
-  salt: null|string;
-  pk?: string;
-  encryptionVersion: number|null;
-  type: WalletType;
-  balance: Balance;
-  XTZrate: number | null;
-  accounts: Account[];
-  derivationPath?: string;
+seed: null|string;
+salt: null|string;
+pk?: string;
+encryptionVersion: number|null;
+type: WalletType;
+balance: Balance;
+XTZrate: number | null;
+accounts: Account[];
+derivationPath?: string;
 }
 export interface Account {
   pkh: string|null;
@@ -107,6 +107,7 @@ export interface DefaultTransactionParams {
   }[];
 }
 export interface Constants {
+  TEZOS_DOMAIN_CONTRACT: string;
   NAME: string;
   NETWORK: string;
   MAINNET: boolean;

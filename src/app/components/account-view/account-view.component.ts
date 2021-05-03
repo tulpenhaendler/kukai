@@ -78,7 +78,8 @@ export class AccountViewComponent implements OnInit {
   }
 
   getCounterparty(transaction: any): string {
-    return this.activityService.getCounterparty(transaction, this.account);
+    const address = this.activityService.getCounterparty(transaction, this.account);
+    return address;
   }
   copy(account: Account) {
     copy(account.address);

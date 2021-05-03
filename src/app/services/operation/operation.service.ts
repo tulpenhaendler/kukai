@@ -15,6 +15,7 @@ import * as elliptic from 'elliptic';
 import { instantiateSecp256k1, hexToBin, binToHex } from '@bitauth/libauth';
 import { TokenService } from '../token/token.service';
 import { isEqual } from 'lodash';
+import { TezosDomainsService } from '../tezos-domains/tezos-domains.service';
 
 const httpOptions = { headers: { 'Content-Type': 'application/json' } };
 
@@ -48,7 +49,8 @@ export class OperationService {
     private http: HttpClient,
     private translate: TranslateService,
     private errorHandlingPipe: ErrorHandlingPipe,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private tezosDomains: TezosDomainsService
   ) { }
   /*
     Returns an observable for the activation of an ICO identity
@@ -407,12 +409,13 @@ export class OperationService {
       }));
     })).pipe(catchError(err => this.errHandler(err)));
   }
+  domainLookup(pkh: string): Promise<string> {
+    return this.tezosDomains.getDomainFromAddress(pkh)
+  }
+
   torusKeyLookup(tz2address: string): Observable<any> {
     // Make it into Promise
     // Zero padding
-    if (tz2address.length !== 36 || tz2address.slice(0, 3) !== 'tz2') {
-      throw new Error('InvalidTorusAddress');
-    }
     return this.http.get(this.nodeURL + `/chains/main/blocks/head/context/contracts/${tz2address}/manager_key`, {})
       .pipe(flatMap((manager: any) => {
         if (manager === null) {

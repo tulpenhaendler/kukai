@@ -6,7 +6,7 @@ import { Account, TorusWallet } from '../../services/wallet/wallet';
 import { LookupService } from '../../services/lookup/lookup.service';
 import { MessageService } from '../../services/message/message.service';
 import { CONSTANTS as _CONSTANTS } from '../../../environments/environment';
-import { TezosDomainsService } from '../../services/tezos-domains/tezos-domains.service';
+import { ActivityService } from '../../../../src/app/services/activity/activity.service';
 
 @Component({
   selector: 'app-header',
@@ -24,6 +24,7 @@ export class HeaderComponent implements OnInit {
     public lookupService: LookupService,
     private coordinatorService: CoordinatorService,
     private messageService: MessageService,
+    private activityService: ActivityService
   ) { }
   ngOnInit(): void {
     if (this.walletService.wallet) {
@@ -41,12 +42,18 @@ export class HeaderComponent implements OnInit {
     if (this.walletService.wallet instanceof TorusWallet) {
       return this.walletService.wallet.displayName();
     }
+    // const domain = this.activityService.getDomainAlias(this.activeAccount?.pkh);
+    // if (domain) { return domain; }
+
     return '';
   }
   getVerifier() {
     if (this.walletService.wallet instanceof TorusWallet) {
       return this.walletService.wallet.verifier;
     }
+    // const domain = this.activityService.getDomainAlias(this.activeAccount?.pkh);
+    // if (domain) { return 'domain'; }
+
     return '';
   }
   getAccountAlias(account: Account) {
